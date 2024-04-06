@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Sum, Count, DateField
 from django.db.models.functions import TruncMonth
 from .models import Venta, Cliente, Ubicacion
+import plotly.graph_objs as go
 
 # Create your views here.
 def ventas_por_mes(request):
@@ -11,23 +12,30 @@ def ventas_por_mes(request):
         total_ventas=Sum('monto'),
         num_ventas=Count('id')
     ).order_by('mes')
+    
+    # Crear la figura de Plotly
+    data = [go.Bar(x=[venta['mes'] for venta in ventas], y=[venta['total_ventas'] for venta in ventas])]
+    layout = go.Layout(title='Ventas por Mes', xaxis_title='Mes', yaxis_title='Total de Ventas')
+    figura = go.Figure(data=data, layout=layout)
 
-    datos = [
-        {'mes': venta['mes'].strftime('%B'), 'total_ventas': venta['total_ventas'], 'num_ventas': venta['num_ventas']}
-        for venta in ventas
-    ]
+    # Convertir la figura a JSON
+    figura_json = figura.to_json()
 
-    return render(request, 'analisis_ventas/dashboard.html', {'ventas_por_mes': datos})
+    # Renderizar la plantilla y pasar los datos como contexto
+    return render(request, 'analisis_ventas/dashboard.html', {'ventas_por_mes_json': figura_json})
 
 def ventas_por_ubicacion(request):
     ventas = Venta.objects.values('ubicacion__nombre', 'ubicacion__ciudad', 'ubicacion__pais').annotate(
         total_ventas=Sum('monto')
     ).order_by('-total_ventas')
 
-    datos = [
-        {'ubicacion': f"{venta['ubicacion__nombre']}, {venta['ubicacion__ciudad']}, {venta['ubicacion__pais']}",
-         'total_ventas': venta['total_ventas']}
-        for venta in ventas
-    ]
+    # Crear la figura de Plotly
+    data = [go.Bar(x=[venta['ubicacion'] for venta in ventas], y=[venta['total_ventas'] for venta in ventas])]
+    layout = go.Layout(title='Ventas por Ubicación', xaxis_title='Ubicación', yaxis_title='Total de Ventas')
+    figura = go.Figure(data=data, layout=layout)
 
-    return render(request, 'analisis_ventas/dashboard.html', {'ventas_por_ubicacion': datos})
+    # Convertir la figura a JSON
+    figura_json = figura.to_json()
+
+    # Renderizar la plantilla y pasar los datos como contexto
+    return render(request, 'analisis_ventas/dashboard.html', {'ventas_por_ubicacion_json': figura_json})
