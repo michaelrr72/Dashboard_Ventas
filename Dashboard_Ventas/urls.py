@@ -16,10 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from analisis_ventas import views
+from analisis_ventas.views import reporte
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ventas-por-mes/', views.ventas_por_mes, name='ventas_por_mes'),
-    path('ventas-por-ubicacion/', views.ventas_por_ubicacion, name='ventas_por_ubicacion'), 
+    path('ventas/', reporte),
 ]
