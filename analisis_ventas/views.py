@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 def reporte(request):
+    
     ventas_qs = Venta.objects.all().values("fecha", "monto", "nombre_cliente", "email_cliente", "locacion", "ciudad", "pais")
     df = pd.DataFrame(list(ventas_qs))
     
