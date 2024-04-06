@@ -3,20 +3,59 @@
 
 <head>
     <title>Dashboard de Ventas</title>
-    <!-- Añadir Bootstrap JS y dependencias desde CDN -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Añadir jQuery (versión completa, para AJAX) y Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Plotly.js para gráficos -->
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js" charset="utf-8"></script>
+    {% load static %}
+    <!-- Scripts locales -->
+    <script src="{% static 'js/dashboard.js' %}"></script>
 </head>
 
 <body>
-    <nav>
-        <!-- Aquí puedes agregar una barra de navegación -->
-    </nav>
     <div class="container">
-        {% block content %}
-        {% endblock %}
+        <h1>Dashboard de Ventas</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Ventas por Mes</h2>
+                <div id="grafico-ventas-por-mes"></div>
+            </div>
+            <div class="col-md-6">
+                <h2>Ventas por Ubicación</h2>
+                <div id="grafico-ventas-por-ubicacion"></div>
+            </div>
+        </div>
+        <!-- Filtro de ventas por ubicación -->
+        <div class="mb-3">
+            <input type="text" class="form-control" id="filtro-ubicacion" placeholder="Filtrar por ubicación">
+        </div>
+        <!-- Filtros por rango de fechas -->
+        <div class="mb-3">
+            <label for="fecha-inicio">Fecha de inicio:</label>
+            <input type="date" class="form-control" id="fecha-inicio">
+        </div>
+        <div class="mb-3">
+            <label for="fecha-fin">Fecha de fin:</label>
+            <input type="date" class="form-control" id="fecha-fin">
+        </div>
+        <!-- Filtro de ordenamiento -->
+        <div class="mb-3">
+            <label for="orden-ubicacion">Ordenar por:</label>
+            <select class="form-control" id="orden-ubicacion">
+                <option value="ascendente">Ventas ascendente</option>
+                <option value="descendente">Ventas descendente</option>
+            </select>
+        </div>
+        <!-- Ventas por Mes -->
+        <div id="grafico-ventas-por-mes"></div>
+        <script type="text/javascript">
+            var mesesData = {{ meses|json_script:"meses-data" }};
+            var montosData = {{ montos|json_script:"montos-data" }};
+        </script>
     </div>
 </body>
 
